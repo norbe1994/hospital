@@ -7,139 +7,136 @@ const app = express();
 const { verificarToken } = require('../middleware/auth');
 
 // importar modelo
-const Usuario = require('../models/usuario');
+const Hospital = require('../models/hospital');
 
 // ==================================================================
-// GET todos los usuarios COMIENZO
-// PÚBLICA
+// GET todos los hospitales COMIENZO
+// PÚBLICO
 // ==================================================================
 app.get('/', (req, res) => {
-  Usuario.find({}, 'nombre email img role').exec((err, usuarios) => {
+  Hospital.find({}, (err, hospitales) => {
     if (err) {
       return res.status(500).json({
         ok: false,
-        mensaje: 'Error cargando usuarios',
+        mensaje: 'Error al cargar hospitales',
         errors: err
       });
     }
 
     return res.status(200).json({
       ok: true,
-      usuarios
+      hospitales
     });
   });
 });
 // ==================================================================
-// todos los usuarios FINAL
+// todos los hospitales FINAL
 // ==================================================================
 
 // ==================================================================
-// POST crear usuario COMIENZO
+// POST crear un hospital COMIENZO
 // PRIVADO(ADMIN)
 // ==================================================================
 app.post('/', [verificarToken], (req, res) => {
-  const { nombre, email, password, img, role } = req.body;
+  const { nombre, img, usuario } = req.body;
 
-  const usuario = new Usuario({
+  const hospital = new Hospital({
     nombre,
-    email,
-    password: bcrypt.hashSync(password, 10),
     img,
-    role
+    usuario
   });
 
-  usuario.save((err, usuario) => {
+  hospital.save((err, hospital) => {
     if (err) {
-      return res.status(400).json({
+      return res.status(500).json({
         ok: false,
-        mensaje: 'Error al crear usuario',
+        mensaje: 'Error al crear hospital',
         errors: err
       });
     }
 
-    return res.status(201).json({
+    return res.status(200).json({
       ok: true,
-      usuario
+      hospital
     });
   });
 });
 // ==================================================================
-// crear usuario FINAL
+// crear un hospital FINAL
 // ==================================================================
 
 // ==================================================================
-// PUT actualizar usuario COMIENZO
+// PUT editar hospital COMIENZO
 // PRIVADO(ADMIN)
 // ==================================================================
 app.put('/:id', [verificarToken], (req, res) => {
   const id = req.params.id;
-  const { nombre, email, rol } = req.body;
+
+  const { nombre, img, usuario } = req.body;
+
   const actualizaciones = {
     nombre,
-    email,
-    rol
+    img,
+    usuario
   };
 
-  Usuario.findByIdAndUpdate(id, actualizaciones, (err, usuario) => {
+  Hospital.findByIdAndUpdate(id, actualizaciones, (err, hospital) => {
     if (err) {
       return res.status(500).json({
         ok: false,
-        mensaje: 'Error al buscar usuario',
+        mensaje: 'Error al intentar editar hospital',
         errors: err
       });
     }
 
-    if (!usuario) {
+    if (!hospital) {
       return res.status(404).json({
         ok: false,
-        mensaje: `Usuario con id: ${id} no existe`
+        mensaje: `No existe hospital con id: ${id}`
       });
     }
 
     return res.status(200).json({
       ok: true,
-      mensaje: 'Usuario existosamente actualizado',
-      usuario
+      hospital
     });
   });
 });
 // ==================================================================
-// actualizar usuario FINAL
+// editar hospital FINAL
 // ==================================================================
 
 // ==================================================================
-// DELETE borrar usuario COMIENZO
+// DELETE borrar hospital COMIENZO
 // PRIVADO(ADMIN)
 // ==================================================================
 app.delete('/:id', [verificarToken], (req, res) => {
   const id = req.params.id;
 
-  Usuario.findByIdAndDelete(id, (err, usuario) => {
+  Hospital.findByIdAndDelete(id, (err, hospital) => {
     if (err) {
       return res.status(500).json({
         ok: false,
-        mensaje: 'Error al borrar usuario',
+        mensaje: 'Error al intertar de borrar hospital',
         errors: err
       });
     }
 
-    if (!usuario) {
+    if (!hospital) {
       return res.status(404).json({
         ok: false,
-        mensaje: `No existe un usuario con id: ${id}`,
-        errors: err
+        mensaje: `Hospital con id: ${id} no encontrado`
       });
     }
 
     return res.status(200).json({
-      ok: true,
-      mensaje: 'Usuario borrado exitosamente',
-      usuario
+      ok: false,
+      hospital
     });
   });
 });
 // ==================================================================
-// borrar usuario FINAL
+// borrar hospital FINAL
 // ==================================================================
 
 module.exports = app;

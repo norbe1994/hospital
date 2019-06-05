@@ -1,17 +1,19 @@
 // importaciones
 const express = require('express');
+const bcrypt = require('bcrypt');
 
 // inicializar variables
 const app = express();
+const { verificarToken } = require('../middleware/auth');
 
 // importar modelo/s
 const Usuario = require('../models/usuario');
 
 // ==================================================================
 // GET todos los usuarios COMIENZO
-// privado(ADMIN)
+// PÚBLICA
 // ==================================================================
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
   Usuario.find({}, 'nombre email img role').exec((err, usuarios) => {
     if (err) {
       return res.status(500).json({
@@ -28,27 +30,27 @@ app.get('/', (req, res, next) => {
   });
 });
 // ==================================================================
-// GET todos los usuarios FINAL
+// todos los usuarios FINAL
 // ==================================================================
 
 // ==================================================================
 // POST crear usuario COMIENZO
-// privado(ADMIN)
+// PRIVADO(ADMIN)
 // ==================================================================
-app.use('/', (req, res) => {
+app.post('/', [verificarToken], (req, res) => {
   const { nombre, email, password, img, role } = req.body;
 
   const usuario = new Usuario({
     nombre,
     email,
-    password,
+    password: bcrypt.hashSync(password, 10),
     img,
     role
   });
 
   usuario.save((err, usuario) => {
     if (err) {
-      return res.status(500).json({
+      return res.status(400).json({
         ok: false,
         mensaje: 'Error al crear usuario',
         errors: err
@@ -62,7 +64,83 @@ app.use('/', (req, res) => {
   });
 });
 // ==================================================================
-// POST crear usuario FINAL
+// crear usuario FINAL
+// ==================================================================
+
+// ==================================================================
+// PUT actualizar usuario COMIENZO
+// PRIVADO(ADMIN)
+// ==================================================================
+app.put('/:id', [verificarToken], (req, res) => {
+  const id = req.params.id;
+  const { nombre, email, rol } = req.body;
+  const actualizaciones = {
+    nombre,
+    email,
+    rol
+  };
+
+  Usuario.findByIdAndUpdate(id, actualizaciones, (err, usuario) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: 'Error al buscar usuario',
+        errors: err
+      });
+    }
+
+    if (!usuario) {
+      return res.status(404).json({
+        ok: false,
+        mensaje: `Usuario con id: ${id} no existe`,
+        errors: err
+      });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      mensaje: 'Usuario existosamente actualizado',
+      usuario
+    });
+  });
+});
+// ==================================================================
+// actualizar usuario FINAL
+// ==================================================================
+
+// ==================================================================
+// DELETE borrar usuario COMIENZO
+// PRIVADO(ADMIN)
+// ==================================================================
+app.delete('/:id', [verificarToken], (req, res) => {
+  const id = req.params.id;
+
+  Usuario.findByIdAndDelete(id, (err, usuario) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: 'Error al borrar usuario',
+        errors: err
+      });
+    }
+
+    if (!usuario) {
+      return res.status(404).json({
+        ok: false,
+        mensaje: `No existe un usuario con id: ${id}`,
+        errors: err
+      });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      mensaje: 'Usuario borrado exitosamente',
+      usuario
+    });
+  });
+});
+// ==================================================================
+// borrar usuario FINAL
 // ==================================================================
 
 module.exports = app;

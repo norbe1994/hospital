@@ -1,4 +1,4 @@
-// importaciones
+// importaciones de terceros
 const express = require('express');
 const connect = require('mongoose').connect;
 const bodyParser = require('body-parser');
@@ -15,10 +15,12 @@ app.use(bodyParser.json());
 // importar rutas
 const appRoutes = require('./routes/app');
 const usuarioRoutes = require('./routes/usuario');
+const loginRoutes = require('./routes/login');
 
 // conectar con MongoDB
 connect(
   'mongodb://localhost:27017/hospital',
+  { useNewUrlParser: true },
   (err, res) => {
     if (err) throw err;
 
@@ -28,6 +30,7 @@ connect(
 
 // rutas
 app.use('/usuario', usuarioRoutes);
+app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 
 // escuchar peticiones

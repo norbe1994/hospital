@@ -1,8 +1,15 @@
 // importaciones
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 // inicializar variables
 const Schema = mongoose.Schema;
+
+// definir roles
+const rolesValidos = {
+  values: ['ADMIN_ROLE', 'USER_ROLE'],
+  message: '{VALUE} no es un rol permitido'
+};
 
 const usuarioSchema = new Schema({
   nombre: {
@@ -24,8 +31,13 @@ const usuarioSchema = new Schema({
   role: {
     type: String,
     required: true,
-    default: 'USER_ROLE'
+    default: 'USER_ROLE',
+    enum: rolesValidos
   }
+});
+
+usuarioSchema.plugin(uniqueValidator, {
+  message: '{PATH} debe ser único pero ya esta en uso'
 });
 
 module.exports = mongoose.model('Usuario', usuarioSchema);

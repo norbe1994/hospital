@@ -1,6 +1,5 @@
 // importaciones
 const express = require('express');
-const bcrypt = require('bcrypt');
 
 // inicializar variables
 const app = express();

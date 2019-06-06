@@ -13,22 +13,59 @@ const Medico = require('../models/medico');
 // GET búsqueda universal COMIENZO
 // PÚBLICO
 // ==================================================================
-app.get('/todos/:parametro', (req, res) => {
+app.get('/:variante/:parametro', (req, res) => {
+  const VARIANTES_VALIDAS = ['todo', 'medico', 'hospital', 'usuario'];
+  const variante = req.params.variante;
+  if (!VARIANTES_VALIDAS.includes(variante)) {
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Parámetro inválido'
+    });
+  }
+
   const parametro = req.params.parametro;
   const regEx = new RegExp(parametro, 'i');
 
-  Promise.all([
-    buscarHospitales(regEx),
-    buscarMedicos(regEx),
-    buscarUsuarios(regEx)
-  ]).then(respuesta => {
-    res.status(200).json({
-      ok: true,
-      hospitales: respuesta[0],
-      medicos: respuesta[1],
-      usuarios: respuesta[2]
-    });
-  });
+  switch (variante) {
+    case 'todo':
+      Promise.all([
+        buscarHospitales(regEx),
+        buscarMedicos(regEx),
+        buscarUsuarios(regEx)
+      ]).then(respuesta => {
+        res.status(200).json({
+          ok: true,
+          hospitales: respuesta[0],
+          medicos: respuesta[1],
+          usuarios: respuesta[2]
+        });
+      });
+      break;
+    case 'medico':
+      buscarMedicos(regEx).then(medicos => {
+        res.status(200).json({
+          ok: true,
+          medicos
+        });
+      });
+      break;
+    case 'usuario':
+      buscarUsuarios(regEx).then(usuarios => {
+        res.status(200).json({
+          ok: true,
+          usuarios
+        });
+      });
+      break;
+    case 'hospital':
+      buscarHospitales(regEx).then(hospitales => {
+        res.status(200).json({
+          ok: true,
+          hospitales
+        });
+      });
+      break;
+  }
 });
 // ==================================================================
 // búsqueda universal FINAL

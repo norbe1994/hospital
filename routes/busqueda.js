@@ -10,65 +10,62 @@ const Hospital = require('../models/hospital');
 const Medico = require('../models/medico');
 
 // ==================================================================
-// GET búsqueda universal COMIENZO
+// GET búsqueda dinámica COMIENZO
 // PÚBLICO
 // ==================================================================
 app.get('/:variante/:parametro', (req, res) => {
-  const VARIANTES_VALIDAS = ['todo', 'medico', 'hospital', 'usuario'];
+  const VARIANTES_VALIDAS = ['todo', 'medicos', 'hospitales', 'usuarios'];
   const variante = req.params.variante;
   if (!VARIANTES_VALIDAS.includes(variante)) {
     return res.status(500).json({
       ok: false,
-      mensaje: 'Parámetro inválido'
+      mensaje: `Parámetro "${variante}" inválido`
     });
   }
 
   const parametro = req.params.parametro;
   const regEx = new RegExp(parametro, 'i');
+  let promesa;
 
   switch (variante) {
     case 'todo':
-      Promise.all([
+      promesa = Promise.all([
         buscarHospitales(regEx),
         buscarMedicos(regEx),
         buscarUsuarios(regEx)
-      ]).then(respuesta => {
-        res.status(200).json({
-          ok: true,
-          hospitales: respuesta[0],
-          medicos: respuesta[1],
-          usuarios: respuesta[2]
-        });
-      });
+      ]);
       break;
-    case 'medico':
-      buscarMedicos(regEx).then(medicos => {
-        res.status(200).json({
-          ok: true,
-          medicos
-        });
-      });
+    case 'medicos':
+      promesa = buscarMedicos(regEx);
       break;
-    case 'usuario':
-      buscarUsuarios(regEx).then(usuarios => {
-        res.status(200).json({
-          ok: true,
-          usuarios
-        });
-      });
+    case 'usuarios':
+      promesa = buscarUsuarios(regEx);
       break;
-    case 'hospital':
-      buscarHospitales(regEx).then(hospitales => {
-        res.status(200).json({
-          ok: true,
-          hospitales
-        });
-      });
+    case 'hospitales':
+      promesa = buscarHospitales(regEx);
       break;
+  }
+
+  if (promesa && variante !== 'todo') {
+    promesa.then(data => {
+      return res.status(200).json({
+        ok: true,
+        [variante]: data
+      });
+    });
+  } else {
+    promesa.then(respuesta => {
+      return res.status(200).json({
+        ok: true,
+        hospitales: respuesta[0],
+        medicos: respuesta[1],
+        usuarios: respuesta[2]
+      });
+    });
   }
 });
 // ==================================================================
-// búsqueda universal FINAL
+// búsqueda dinámica FINAL
 // ==================================================================
 
 // ==================================================================

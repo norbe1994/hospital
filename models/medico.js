@@ -9,10 +9,12 @@ const medicoSchema = new Schema({
   img: { type: String },
   usuario: {
     type: Schema.Types.ObjectId,
+    ref: 'Usuario',
     required: [true, 'usuario es un campo requerido']
   },
   hospital: {
     type: Schema.Types.ObjectId,
+    ref: 'Hospital',
     required: [true, 'hospital es un campo requerido']
   }
 });

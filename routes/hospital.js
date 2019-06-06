@@ -13,20 +13,30 @@ const Hospital = require('../models/hospital');
 // PÚBLICO
 // ==================================================================
 app.get('/', (req, res) => {
-  Hospital.find({}, (err, hospitales) => {
-    if (err) {
-      return res.status(500).json({
-        ok: false,
-        mensaje: 'Error al cargar hospitales',
-        errors: err
-      });
-    }
+  const desde = req.query.desde || 0;
+  const porPagina = req.query.porPagina || 5;
 
-    return res.status(200).json({
-      ok: true,
-      hospitales
+  Hospital.find({})
+    .skip(desde)
+    .limit(porPagina)
+    .populate('usuario', 'nombre email')
+    .exec((err, hospitales) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: 'Error al cargar hospitales',
+          errors: err
+        });
+      }
+
+      Hospital.count({}, (err, conteo) => {
+        return res.status(200).json({
+          ok: true,
+          hospitales,
+          conteo
+        });
+      });
     });
-  });
 });
 // ==================================================================
 // todos los hospitales FINAL

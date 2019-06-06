@@ -13,20 +13,30 @@ const Medico = require('../models/medico');
 // PÚBLICO(ADMIN)
 // ==================================================================
 app.get('/', (req, res) => {
-  Medico.find({}, (err, medicos) => {
-    if (err) {
-      return res.status(500).json({
-        ok: false,
-        mensaje: 'Error de servidor al cargar los médicos',
-        errors: err
-      });
-    }
+  const desde = req.query.desde || 0;
+  const porPagina = req.query.porPagina || 5;
 
-    return res.status(200).json({
-      ok: true,
-      medicos
+  Medico.find({})
+    .skip(desde)
+    .limit(porPagina)
+    .populate('usuario', 'nombre email')
+    .exec((err, medicos) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: 'Error al cargar medicos',
+          errors: err
+        });
+      }
+
+      Medico.find({}, (err, conteo) => {
+        return res.status(200).json({
+          ok: true,
+          medicos,
+          conteo
+        });
+      });
     });
-  });
 });
 // ==================================================================
 // todos los médicos FINAL
@@ -90,7 +100,7 @@ app.put('/:id', [verificarToken], (req, res) => {
       });
     }
 
-    if (!usuario) {
+    if (!medico) {
       return res.status(404).json({
         ok: false,
         mensaje: 'Usuario no encontrado'

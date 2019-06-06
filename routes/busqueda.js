@@ -24,25 +24,25 @@ app.get('/:variante/:parametro', (req, res) => {
   }
 
   const parametro = req.params.parametro;
-  const regEx = new RegExp(parametro, 'i');
+  const regex = new RegExp(parametro, 'i');
   let promesa;
 
   switch (variante) {
     case 'todo':
       promesa = Promise.all([
-        buscarHospitales(regEx),
-        buscarMedicos(regEx),
-        buscarUsuarios(regEx)
+        buscarHospitales(regex),
+        buscarMedicos(regex),
+        buscarUsuarios(regex)
       ]);
       break;
     case 'medicos':
-      promesa = buscarMedicos(regEx);
+      promesa = buscarMedicos(regex);
       break;
     case 'usuarios':
-      promesa = buscarUsuarios(regEx);
+      promesa = buscarUsuarios(regex);
       break;
     case 'hospitales':
-      promesa = buscarHospitales(regEx);
+      promesa = buscarHospitales(regex);
       break;
   }
 

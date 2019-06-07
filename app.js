@@ -20,6 +20,7 @@ const hospitalRoutes = require('./routes/hospital');
 const loginRoutes = require('./routes/login');
 const busquedaRoutes = require('./routes/busqueda');
 const uploadRoutes = require('./routes/upload');
+const imagenRoutes = require('./routes/imagen');
 
 // conectar con MongoDB
 connect(
@@ -39,6 +40,7 @@ app.use('/hospital', hospitalRoutes);
 app.use('/login', loginRoutes);
 app.use('/busqueda', busquedaRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/imagen', imagenRoutes);
 app.use('/', appRoutes);
 
 // escuchar peticiones

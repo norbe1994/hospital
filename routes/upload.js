@@ -19,7 +19,7 @@ app.use(fileUpload());
 // ==================================================================
 app.post('/:coleccion/:id', (req, res) => {
   const { coleccion, id } = req.params;
-  const colecciones = ['hospitales', 'medicos', 'usuarios'];
+  const colecciones = ['hospital', 'medico', 'usuario'];
   if (!colecciones.includes(coleccion)) {
     return res.status(400).json({
       ok: false,
@@ -75,7 +75,7 @@ app.post('/:coleccion/:id', (req, res) => {
 // ==================================================================
 function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
   switch (coleccion) {
-    case 'usuarios':
+    case 'usuario':
       Usuario.findById(id, (err, usuario) => {
         if (err) {
           return res.status(500).json({
@@ -85,7 +85,14 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
           });
         }
 
-        const pathViejo = `./uploads/usuarios/${usuario.img}`;
+        if (!usuario) {
+          return res.status(400).json({
+            ok: false,
+            mensaje: `EL usuario con id: ${id} no fue econtrado`
+          });
+        }
+
+        const pathViejo = `./uploads/usuario/${usuario.img}`;
 
         if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
 
@@ -107,7 +114,7 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
         });
       });
       break;
-    case 'medicos':
+    case 'medico':
       Medico.findById(id, (err, medico) => {
         if (err) {
           return res.status(500).json({
@@ -117,7 +124,14 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
           });
         }
 
-        const pathViejo = `./uploads/medicos/${medico.img}`;
+        if (!medico) {
+          return res.status(400).json({
+            ok: false,
+            mensaje: `EL médico con id: ${id} no fue econtrado`
+          });
+        }
+
+        const pathViejo = `./uploads/medico/${medico.img}`;
 
         if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
 
@@ -139,7 +153,7 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
         });
       });
       break;
-    case 'hospitales':
+    case 'hospital':
       Hospital.findById(id, (err, hospital) => {
         if (err) {
           return res.status(500).json({
@@ -149,7 +163,14 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
           });
         }
 
-        const pathViejo = `./uploads/hospitales/${hospital.img}`;
+        if (!hospital) {
+          return res.status(400).json({
+            ok: false,
+            mensaje: `EL hospital con id: ${id} no fue econtrado`
+          });
+        }
+
+        const pathViejo = `./uploads/hospital/${hospital.img}`;
 
         if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
 

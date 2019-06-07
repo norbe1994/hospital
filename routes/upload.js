@@ -5,6 +5,7 @@ const fs = require('fs');
 
 // declaración de variables
 const app = express();
+const COLECCIONES = require('../config/config').COLECCIONES;
 
 // modelos
 const Usuario = require('../models/usuario');
@@ -19,11 +20,10 @@ app.use(fileUpload());
 // ==================================================================
 app.post('/:coleccion/:id', (req, res) => {
   const { coleccion, id } = req.params;
-  const colecciones = ['hospital', 'medico', 'usuario'];
-  if (!colecciones.includes(coleccion)) {
+  if (!COLECCIONES.includes(coleccion)) {
     return res.status(400).json({
       ok: false,
-      mensaje: `Primer parámetro enviado: ${coleccion} - Válidos: ${colecciones.join(
+      mensaje: `Primer parámetro enviado: ${coleccion} - Válidos: ${COLECCIONES.join(
         ', '
       )}`
     });
@@ -75,7 +75,8 @@ app.post('/:coleccion/:id', (req, res) => {
 // ==================================================================
 function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
   switch (coleccion) {
-    case 'usuario':
+    // usuario
+    case COLECCIONES[2]:
       Usuario.findById(id, (err, usuario) => {
         if (err) {
           return res.status(500).json({
@@ -114,7 +115,8 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
         });
       });
       break;
-    case 'medico':
+    // medico
+    case COLECCIONES[0]:
       Medico.findById(id, (err, medico) => {
         if (err) {
           return res.status(500).json({
@@ -153,7 +155,8 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
         });
       });
       break;
-    case 'hospital':
+    // hospital
+    case COLECCIONES[1]:
       Hospital.findById(id, (err, hospital) => {
         if (err) {
           return res.status(500).json({

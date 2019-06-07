@@ -3,7 +3,7 @@ const express = require('express');
 
 // declaración de variables
 const app = express();
-
+const COLECCIONES = require('../config/config').COLECCIONES;
 // modelos
 const Usuario = require('../models/usuario');
 const Hospital = require('../models/hospital');
@@ -14,12 +14,14 @@ const Medico = require('../models/medico');
 // PÚBLICO
 // ==================================================================
 app.get('/:variante/:parametro', (req, res) => {
-  const VARIANTES_VALIDAS = ['todo', 'medicos', 'hospitales', 'usuarios'];
+  const VARIANTES_VALIDAS = ['todo', ...COLECCIONES];
   const variante = req.params.variante;
   if (!VARIANTES_VALIDAS.includes(variante)) {
     return res.status(500).json({
       ok: false,
-      mensaje: `Parámetro "${variante}" inválido`
+      mensaje: `Parámetro "${variante}" inválido. Válidos ${VARIANTES_VALIDAS.join(
+        ', '
+      )}`
     });
   }
 
@@ -35,13 +37,16 @@ app.get('/:variante/:parametro', (req, res) => {
         buscarUsuarios(regex)
       ]);
       break;
-    case 'medicos':
+    // medico
+    case COLECCIONES[0]:
       promesa = buscarMedicos(regex);
       break;
-    case 'usuarios':
+    // usuario
+    case COLECCIONES[2]:
       promesa = buscarUsuarios(regex);
       break;
-    case 'hospitales':
+    // hospital
+    case COLECCIONES[1]:
       promesa = buscarHospitales(regex);
       break;
   }

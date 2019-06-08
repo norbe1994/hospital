@@ -61,6 +61,15 @@ app.post('/', (req, res) => {
 // ==================================================================
 // POST google login COMIENZO
 // PÚBLICO
+/* árbol de posibilidades
+1. el usuario fue encontrado
+  1.1 el usuario no fue originalmente creado con su infromación de google sino con el modo de registro de email y contraseña
+    1.1.1 devolder un status 500
+  1.2 el usuario si fue originalmente creado con su infromación de google
+    1.2.1 devoler un status 200 con el usuario y el jwt
+1.2 el usuario no fue encontrado
+  1.2.1 crearlo usando la data necesaria del usuario devuelto por la función verificarGoogleToken
+ */
 // ==================================================================
 app.post('/google', async (req, res) => {
   const { token } = req.body;

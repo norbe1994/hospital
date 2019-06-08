@@ -33,6 +33,10 @@ const usuarioSchema = new Schema({
     required: true,
     default: 'USER_ROLE',
     enum: rolesValidos
+  },
+  isGoogle: {
+    type: Boolean,
+    default: false
   }
 });
 

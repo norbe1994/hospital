@@ -11,7 +11,6 @@ const verificarToken = (req, res, next) => {
   token = req.query.token;
 
   jwt.verify(token, SEED, (err, decoded) => {
-    console.log(decoded, 'DECODED');
     if (err) {
       return res.status(401).json({
         ok: false,

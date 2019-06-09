@@ -1,6 +1,6 @@
 // importaciones de terceros
 const express = require('express');
-const connect = require('mongoose').connect;
+const { connect } = require('mongoose');
 const bodyParser = require('body-parser');
 
 // inicializar variables

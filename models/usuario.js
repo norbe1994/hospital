@@ -26,7 +26,8 @@ const usuarioSchema = new Schema({
     required: [true, 'password es un campo requerido']
   },
   img: {
-    type: String
+    type: String,
+    default: ''
   },
   role: {
     type: String,

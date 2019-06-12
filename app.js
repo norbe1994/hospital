@@ -2,12 +2,25 @@
 const express = require('express');
 const { connect } = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 // inicializar variables
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // middlewares
+//CORS
+app.use(cors());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+  next();
+});
+
 // interpretar application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

@@ -14,10 +14,10 @@ const Usuario = require('../models/usuario');
 // PÚBLICA
 // ==================================================================
 app.get('/', (req, res) => {
-  const desde = req.query.desde || 0;
-  const porPagina = req.query.porPagina || 5;
+  const desde = Number.parseInt(req.query.desde) || 0;
+  const porPagina = Number.parseInt(req.query.porPagina) || 5;
 
-  Usuario.find({}, 'nombre email img role')
+  Usuario.find({}, 'nombre email img role isGoogle')
     .skip(desde)
     .limit(porPagina)
     .exec((err, usuarios) => {
@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 // POST crear usuario COMIENZO
 // PRIVADO(ADMIN)
 // ==================================================================
-app.post('/', [verificarToken], (req, res) => {
+app.post('/', (req, res) => {
   const { nombre, email, password, img, role } = req.body;
 
   const usuario = new Usuario({

@@ -95,7 +95,9 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
 
         const pathViejo = `./uploads/usuario/${usuario.img}`;
 
-        if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
+        if (usuario.img) {
+          if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
+        }
 
         usuario.img = imagenId;
 
@@ -135,7 +137,9 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
 
         const pathViejo = `./uploads/medico/${medico.img}`;
 
-        if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
+        if (medico.img) {
+          if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
+        }
 
         medico.img = imagenId;
 
@@ -175,7 +179,9 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
 
         const pathViejo = `./uploads/hospital/${hospital.img}`;
 
-        if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
+        if (hospital.img) {
+          if (fs.existsSync(pathViejo)) fs.unlinkSync(pathViejo);
+        }
 
         hospital.img = imagenId;
 

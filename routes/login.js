@@ -156,7 +156,6 @@ async function verificarGoogleToken(token) {
   // const userid = payload['sub'];
   // If request specified a G Suite domain:
   //const domain = payload['hd'];
-
   return {
     nombre: payload.name,
     email: payload.email,

@@ -3,12 +3,15 @@ const express = require('express');
 const { connect } = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const helmet = require('helmet');
 
 // inicializar variables
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // middlewares
+// helmet: porque es importante ponerse el casco ⛑
+app.use(helmet());
 //CORS
 app.use(cors());
 app.use((req, res, next) => {

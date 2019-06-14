@@ -112,6 +112,7 @@ function actualizarImagenPorColeccion(coleccion, id, imagenId, res) {
           return res.status(200).json({
             ok: true,
             mensaje: 'Usuario actualizado',
+            usuario,
             imagenId
           });
         });

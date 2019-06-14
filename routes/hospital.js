@@ -13,8 +13,8 @@ const Hospital = require('../models/hospital');
 // PÚBLICO
 // ==================================================================
 app.get('/', (req, res) => {
-  const desde = req.query.desde || 0;
-  const porPagina = req.query.porPagina || 5;
+  const desde = Number.parseInt(req.query.desde) || 0;
+  const porPagina = Number.parseInt(req.query.porPagina) || 5;
 
   Hospital.find({})
     .skip(desde)
@@ -40,6 +40,42 @@ app.get('/', (req, res) => {
 });
 // ==================================================================
 // todos los hospitales FINAL
+// ==================================================================
+
+// ==================================================================
+// GET hospital COMIENZO
+// PRIVADO(USER)
+// ==================================================================
+app.get('/:id', (req, res) => {
+  const { id } = req.params;
+
+  Hospital.findById(id)
+    .populate('usuario', 'nombre img email')
+    .exec((err, hospital) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: `Error de servidor al buscar hopistal con id: ${id}`,
+          errors: err
+        });
+      }
+
+      if (!hospital) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: `No se encontró hospital con id: ${id}`,
+          errors: err
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        hospital
+      });
+    });
+});
+// ==================================================================
+// hospital FINAL
 // ==================================================================
 
 // ==================================================================

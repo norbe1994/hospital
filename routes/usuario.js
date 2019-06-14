@@ -82,11 +82,11 @@ app.post('/', (req, res) => {
 // ==================================================================
 app.put('/:id', [verificarToken], (req, res) => {
   const id = req.params.id;
-  const { nombre, email, rol } = req.body;
+  const { nombre, email, role } = req.body;
   const actualizaciones = {
     nombre,
     email,
-    rol
+    role
   };
 
   Usuario.findByIdAndUpdate(id, actualizaciones, (err, usuario) => {
